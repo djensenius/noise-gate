@@ -13,7 +13,9 @@
     unreachable_pub
 )]
 
-use sample::{Frame, Sample, SignedSample};
+// use dasp::{Frame, Sample};
+use dasp::Frame;
+use dasp_sample::{Sample, SignedSample};
 
 /// A [*Noise Gate*][wiki] which can be used to split a stream of audio based
 /// on volume, skipping periods of silence.
@@ -48,7 +50,9 @@ impl<S> NoiseGate<S> {
     }
 
     /// Is the gate currently ignoring silence?
-    pub fn is_closed(&self) -> bool { !self.is_open() }
+    pub fn is_closed(&self) -> bool {
+        !self.is_open()
+    }
 }
 
 impl<S: Sample> NoiseGate<S> {
@@ -84,7 +88,7 @@ where
 {
     let threshold = abs(threshold.to_signed_sample());
     let negated_threshold =
-        F::Sample::equilibrium().to_signed_sample() - threshold;
+        F::Sample::EQUILIBRIUM.to_signed_sample() - threshold;
 
     frame
         .channels()
@@ -93,7 +97,7 @@ where
 }
 
 fn abs<S: SignedSample>(sample: S) -> S {
-    let zero = S::equilibrium();
+    let zero = S::EQUILIBRIUM;
     if sample >= zero {
         sample
     } else {
@@ -126,7 +130,7 @@ where
             } else {
                 State::Open
             }
-        },
+        }
 
         State::Closing { remaining_samples } => {
             if below_threshold(frame, open_threshold) {
@@ -140,7 +144,7 @@ where
             } else {
                 State::Open
             }
-        },
+        }
 
         State::Closed => {
             if below_threshold(frame, open_threshold) {
@@ -148,7 +152,7 @@ where
             } else {
                 State::Open
             }
-        },
+        }
     }
 }
 
