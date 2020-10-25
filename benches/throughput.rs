@@ -2,9 +2,10 @@ use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime,
     BenchmarkGroup, Criterion, Throughput,
 };
+use dasp::{Frame, Sample};
+use dasp_sample::{FromSample, ToSample};
 use hound::WavReader;
 use noise_gate::{NoiseGate, Sink};
-use sample::{Frame, FromSample, Sample, ToSample};
 use std::{fs, path::Path};
 
 const DATA_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/data/");
@@ -71,9 +72,13 @@ struct Counter {
 }
 
 impl<F> Sink<F> for Counter {
-    fn record(&mut self, _: F) { self.samples += black_box(1); }
+    fn record(&mut self, _: F) {
+        self.samples += black_box(1);
+    }
 
-    fn end_of_transmission(&mut self) { self.chunks += black_box(1); }
+    fn end_of_transmission(&mut self) {
+        self.chunks += black_box(1);
+    }
 }
 
 criterion_group!(benches, bench_throughput);

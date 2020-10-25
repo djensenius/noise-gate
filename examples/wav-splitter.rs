@@ -1,6 +1,6 @@
+use dasp::Frame;
 use hound::{WavReader, WavSpec, WavWriter};
 use noise_gate::NoiseGate;
-use sample::Frame;
 use std::{
     error::Error,
     fs::{self, File},
@@ -88,7 +88,7 @@ impl Sink {
 
     fn get_writer(&mut self) -> &mut WavWriter<BufWriter<File>> {
         if self.writer.is_none() {
-            // Lazily initialize the writer. This lets us drop the writer when 
+            // Lazily initialize the writer. This lets us drop the writer when
             // sent an end_of_transmission and have it automatically start
             // writing to a new clip when necessary.
             let filename = self
